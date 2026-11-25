@@ -1,0 +1,47 @@
+{
+    "experiment": "KH-V-03.3b.2",
+    "duration_seconds": 60,
+    "mean_arrival_seconds": 0.8,
+    "burst_probability": 0.3,
+    "burst_interval_min": 0.005,
+    "burst_interval_max": 0.05,
+    "job_rows": [
+        2,
+        4,
+        8,
+        16,
+        24,
+        32,
+        48,
+        64
+    ],
+    "job_probabilities": [
+        0.05,
+        0.1,
+        0.15,
+        0.2,
+        0.2,
+        0.15,
+        0.1,
+        0.05
+    ],
+    "width": 4096,
+    "steps": 400,
+    "compute_quantum": 2,
+    "dt": 0.1,
+    "seed": 42,
+    "repeats": 5,
+    "modes": [
+        "GLOBAL_HALF",
+        "GLOBAL_PREDICT",
+        "MAIL_HALF",
+        "MAIL_PREDICT"
+    ],
+    "speed_alpha": 0.25,
+    "overload_tau": 1.25,
+    "overload_threshold": 2.0,
+    "slowdown_threshold": 0.1,
+    "timeout": 60,
+    "shutdown_timeout": 20,
+    "live_journal": true
+}
