@@ -1,7 +1,3 @@
-# KH-V-03.3b.2: Parallel Task Distribution Experiment
-
-This research prototype compares four ways to distribute tasks among processes on a single Windows computer, using either a shared structure or personal message channels, each with simple splitting or prediction. Worker processes are automatically assigned to detected Windows processor groups.
-
 ## What we are building
 
 We are exploring a way to organize computation in which many separate worker processes jointly execute tasks. Each process is treated as a computational element: it receives work, executes its share, and interacts with other participants. Within the project, these elements are called “crystals”: the term refers to a software model, not physical crystals.
