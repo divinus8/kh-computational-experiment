@@ -52,3 +52,10 @@ The project idea, research questions, and direction belong to the author. The au
 ## Status
 
 This is a preliminary research prototype; the API and result formats may change. Licensing and terms of use have not yet been determined by the author.
+
+
+## Planned development
+
+We plan to investigate coordinated task allocation across CPUs, GPUs and AI accelerators, including the cost of moving data and differences in device capabilities. Another research direction is a shared computing environment spanning multiple networked servers. A proposed performance memory would retain device- and workload-specific profiles and update them as conditions change. Potential AI-server workloads are a future area for evaluation.
+
+These are research goals, not current capabilities. The published prototype is CPU-only and runs on one Windows machine; real accelerators, cross-server operation, fault recovery and performance-profile memory have not yet been implemented or validated. See the [research journal](RESEARCH_JOURNAL.md) for the current results, limitations and proposed tests.
