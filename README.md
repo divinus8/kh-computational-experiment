@@ -1,27 +1,31 @@
-## Что мы создаём
+# KH-V-03.3b.2: Parallel Task Distribution Experiment
 
-Мы исследуем способ организации вычислений, в котором задача выполняется совместно множеством отдельных рабочих процессов. Каждый процесс рассматривается как вычислительный элемент: он получает работу, выполняет свою часть и взаимодействует с другими участниками. Внутри проекта такие элементы называются «кристаллами» — это название программной модели, а не физических кристаллов.
+This research prototype compares four ways to distribute tasks among processes on a single Windows computer, using either a shared structure or personal message channels, each with simple splitting or prediction. Worker processes are automatically assigned to detected Windows processor groups.
 
-Долгосрочная идея — изучить, как такие элементы могут объединяться в группы и распределять работу с учётом собственного опыта. В дальнейшем предполагается проверить иерархическую организацию: группа элементов сможет выступать для внешней среды как один составной элемент и распределять работу внутри себя. Это направление будущих экспериментов, а не возможность, доказанная текущей версией. 
+## What we are building
 
-## Что делает опубликованный прототип
+We are exploring a way to organize computation in which many separate worker processes jointly execute tasks. Each process is treated as a computational element: it receives work, executes its share, and interacts with other participants. Within the project, these elements are called “crystals”: the term refers to a software model, not physical crystals.
 
-Версия КХ-В-03.3b.2 сравнивает четыре варианта распределения работы на одном компьютере:
+The long-term idea is to study how such elements can form groups and distribute work using their accumulated experience. A future experiment will investigate hierarchical organization, in which a group acts as a single composite element to the outside while distributing work internally. This is a direction for future research, not a capability established by the current version.
 
-| Взаимодействие | Простое распределение | С прогнозированием |
+## What the prototype does
+
+Version KH-V-03.3b.2 compares four task distribution modes on one computer:
+
+| Interaction | Simple splitting | Prediction-based |
 | --- | --- | --- |
-| Через общую структуру | GLOBAL HALF | GLOBAL PREDICT |
-| Через персональные каналы сообщений | MAIL HALF | MAIL PREDICT |
+| Shared structure | GLOBAL HALF | GLOBAL PREDICT |
+| Personal message channels | MAIL HALF | MAIL PREDICT |
 
-В вариантах MAIL процессы обмениваются сообщениями для передачи работы и подтверждения её получения. Прототип регистрирует события, проверяет результаты и измеряет задержку начала задачи, время её выполнения и использование процессорного времени. Прогнозирование в данном эксперименте почти не изменило распределение работы; его пользу на других нагрузках ещё предстоит проверить.
+In MAIL modes, processes exchange messages to transfer work and acknowledge receipt. The prototype records events, validates results, and measures task start latency, task completion time, and CPU time. Prediction had little effect on distribution in this experiment; its value for other workloads remains to be tested.
 
-## Проверенные конфигурации
+## Tested configurations
 
-На сервере Windows Server 2019: две группы по 20 логических процессоров, четыре режима по пять повторов. На отдельном ПК Windows: одна группа, 16 логических процессоров, сокращённый тест по одному повтору. На Linux и macOS этот код не поддерживается: он использует Windows API. Другие конфигурации пока не проверены.
+On Windows Server 2019, the experiment used two processor groups of 20 logical processors each, with five repetitions of each mode. On a separate Windows PC with one group and 16 logical processors, a shorter test ran one repetition per mode. Linux and macOS are not supported because the code uses the Windows API. Other configurations have not yet been tested.
 
-## Запуск
+## Running the experiment
 
-Нужны Windows, Python 3.12 и библиотеки из `requirements.txt`. В PowerShell в папке проекта:
+Windows, Python 3.12, and the libraries listed in `requirements.txt` are required. Open PowerShell in the project directory and run:
 
 ```powershell
 python -m venv .venv
@@ -29,41 +33,26 @@ python -m venv .venv
 .\.venv\Scripts\python.exe run_experiment.py --quick
 ```
 
-Без `--quick` используется исходная конфигурация полного эксперимента; он существенно дольше и нагружает доступные процессоры. Каждый запуск создаёт новую папку внутри `runs`, не перезаписывая исходные данные. Успешный запуск завершается сообщением `ALL VALID: True` и кодом 0. Для проверки смотрите также `benchmark_raw.csv` и диагностические файлы в папке запуска.
+Without `--quick`, the original full experiment configuration is used; it takes substantially longer and loads the available processors. Each run creates a new directory under `runs` without overwriting the original data. A successful run reports `ALL VALID: True` and exits with code 0. Also inspect `benchmark_raw.csv` and the diagnostic files in the run directory.
 
-## Исходные результаты
+## Original results
 
-В `results/` приведены таблицы серверного запуска. В сводке медианная задержка начала задачи: GLOBAL HALF 9,552 мс, MAIL HALF 1,014 мс; медианное время выполнения — 450,58 и 444,09 мс соответственно. Это данные одной тестовой нагрузки, а не универсальное ускорение. Изменялось несколько элементов реализации, поэтому нельзя приписать разницу одному механизму. Для других машин абсолютные значения могут отличаться.
+The `results/` directory contains the server run tables. The summary reports median task start latency of 9.552 ms for GLOBAL HALF and 1.014 ms for MAIL HALF; median task completion times were 450.58 ms and 444.09 ms, respectively. These figures apply to one test workload and do not demonstrate a universal speedup. Several implementation details changed, so the difference cannot be attributed to a single mechanism. Absolute values may differ on other machines.
 
-Все 20 серверных испытаний отмечены встроенной проверкой как корректные. Прототип использует общую память и блокировки; сетевое взаимодействие и устойчивость к отказам здесь не исследованы. Результаты и проверки следует дополнительно воспроизвести независимо.
+All 20 server trials passed the built-in checks. The prototype uses shared memory and locks; network communication and fault tolerance were not investigated. The results and checks need independent reproduction.
 
-## Статус
+## Next questions
 
-Предварительная исследовательская версия; API и формат результатов могут измениться. Условия использования и лицензия ещё не определены автором.
+Future work includes independent reproduction across different workloads and configurations and comparisons with other suitable task distribution methods. Network communication, recovery from failures, and composite computational elements remain to be investigated. Compatibility with all hardware and system restrictions has not been verified.
 
-# КХ-В-03.3b.2: эксперимент с распределением вычислительных задач
+## Project origins
 
-Исследовательский прототип сравнивает четыре режима распределения задач между процессами на одном компьютере Windows: общую структуру и персональные каналы сообщений, каждый — с простым распределением и прогнозированием. Рабочие процессы автоматически закрепляются за обнаруженными процессорными группами. 
+The project grew out of the author’s KH research and uses some of its imagery as inspiration for a computational architecture. This experiment studies a software system and does not itself test the physical hypotheses of the KH concept.
 
-## Что делает опубликованный прототип
+## Author and AI contribution
 
-Версия КХ-В-03.3b.2 сравнивает четыре варианта распределения работы на одном компьютере:
+The project idea, research questions, and direction belong to the author. The author is not a programmer and does not consider himself a vibe coder. The code was developed with the help of ChatGPT and Gemini, which also assisted with experiments and analysis. The project welcomes independent verification and feedback.
 
-| Взаимодействие | Простое распределение | С прогнозированием |
-| --- | --- | --- |
-| Через общую структуру | GLOBAL HALF | GLOBAL PREDICT |
-| Через персональные каналы сообщений | MAIL HALF | MAIL PREDICT |
+## Status
 
-В вариантах MAIL процессы обмениваются сообщениями для передачи работы и подтверждения её получения. Прототип регистрирует события, проверяет результаты и измеряет задержку начала задачи, время её выполнения и использование процессорного времени. Прогнозирование в данном эксперименте почти не изменило распределение работы; его пользу на других нагрузках ещё предстоит проверить.
-
-## Следующие вопросы
-
-Необходимо независимо воспроизвести результаты на разных нагрузках и конфигурациях и сравнить их с другими способами распределения задач. Сетевое взаимодействие, восстановление после отказов и составные вычислительные элементы ещё предстоит исследовать. Совместимость со всеми вариантами оборудования и ограничениями системы не проверена.
-
-## Происхождение проекта
-
-Проект вырос из авторского исследования КХ и использует некоторые его образы как источник идей для вычислительной архитектуры. Этот эксперимент изучает свойства программной системы и сам по себе не проверяет физические предположения концепции КХ.
-
-## Автор и участие ИИ
-
-Идея проекта, постановка вопросов и направление исследования принадлежат автору проекта. Автор не является программистом и не считает себя вайб-кодером. Код разрабатывался с помощью ИИ-ассистентов ChatGPT и Gemini, которые помогали также с экспериментами и анализом результатов. Проект открыт для независимой проверки и замечаний сообщества.
+This is a preliminary research prototype; the API and result formats may change. Licensing and terms of use have not yet been determined by the author.
